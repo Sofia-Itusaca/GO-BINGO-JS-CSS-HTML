@@ -28,8 +28,8 @@ Un juego **todo-en-uno** que reemplaza:
 - Cartilla	Efectos visuales al marcar números
 - Sonidos	Ambiente inmersivo con audio 3D
 
-##📸 Capturas
--  
+## 📸 Capturas
+  
 Lo que veras al levantarlo
 ![Demo del Juego](assets/1.png)
 -  
@@ -39,7 +39,8 @@ Asi se vera a medio juego
 Asi se vera al termianr el juego
 ![Demo del Juego](assets/3.png)
 - 
-##🚀 Instalación
+
+## 🚀 Instalación
 ```diff
 git clone https://github.com/Sofia-Itusaca/GO-BINGO-JS-CSS-HTML.git
 cd GO-BINGO-JS-CSS-HTML
