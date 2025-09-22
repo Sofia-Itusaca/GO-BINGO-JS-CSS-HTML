@@ -1,0 +1,222 @@
+
+/* Clase para el fondo */
+.fondo {
+    position: fixed; /* Fija el fondo en su lugar */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('fondo.jpg'); /* Ruta de la imagen */
+    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-attachment: fixed; /* Fija el fondo mientras se desplaza el contenido */
+    z-index: -1; /* Asegura que el fondo esté detrás de todo el contenido */
+}
+
+/* Estilo general para las imágenes de bolas de billar */
+.billar {
+    top: 340px; 
+    left: 5px;
+    position: absolute; /* Permite posicionar las imágenes libremente */
+    width: 150%; /* Tamaño inicial del ancho de la imagen */
+    height: 170px; /* Tamaño inicial de la altura de la imagen */
+    object-fit: cover; /* Ajusta la imagen sin distorsión */
+    background-color: transparent; /* Fondo transparente */
+}
+
+.pelota2{
+    top: 440px; 
+    left: 575px;
+    position: absolute; /* Permite posicionar las imágenes libremente */
+    width: 120%; /* Tamaño inicial del ancho de la imagen */
+    height: 200px; /* Tamaño inicial de la altura de la imagen */
+    object-fit: cover; /* Ajusta la imagen sin distorsión */
+    background-color: transparent; /* Fondo transparente */
+}
+
+.pelota3 {
+    top: -110px; 
+    left: 250px;
+    position: absolute; /* Permite posicionar las imágenes libremente */
+    width: 105%; /* Tamaño inicial del ancho de la imagen */
+    height: 145px; /* Tamaño inicial de la altura de la imagen */
+    object-fit: cover; /* Ajusta la imagen sin distorsión */
+    background-color: transparent; /* Fondo transparente */
+}
+
+.pelota-container {
+    position: absolute; /* Asegura que el contenedor no afecte otros elementos */
+}
+
+.pelota4 {
+    top: 230px; 
+    left: 5px; /* Ajusta la posición según tu diseño */
+    position: absolute; /* La imagen no afecta otros elementos */
+    width: 190px; /* Tamaño de la imagen */
+    height: auto; /* Mantiene la proporción */
+    object-fit: cover;
+}
+
+.pelota5 {
+    top: 130px; 
+    left: 65px; /* Ajusta la posición según tu diseño */
+    position: absolute; /* La imagen no afecta otros elementos */
+    width: 200px; /* Tamaño de la imagen */
+    height: auto; /* Mantiene la proporción */
+    object-fit: cover;
+}
+
+.pelota6 {
+    top: -365px; 
+    left: 1424px; /* Ajusta la posición según tu diseño */
+    position: absolute; /* La imagen no afecta otros elementos */
+    width: 95px; /* Tamaño de la imagen */
+    height: auto; /* Mantiene la proporción */
+    object-fit: cover;
+}
+
+.pelota7 {
+    top: 310px; 
+    left: 1415px; /* Ajusta la posición según tu diseño */
+    position: absolute; /* La imagen no afecta otros elementos */
+    width: 95px; /* Tamaño de la imagen */
+    height: auto; /* Mantiene la proporción */
+    object-fit: cover;
+}
+
+
+body {
+    font-family: 'Times New Roman', Times, serif;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: flex-start; /* Cambiado para que el contenido quede alineado a la izquierda */
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    cursor: URL('ZarosGodsword.cur'), auto; /* Cambiado para personalizar el cursor */
+}
+
+/* Contenedor principal que moverá todo hacia el lado izquierdo */
+.content1 {
+    display: flex;
+    margin-left: 1%;
+    flex-direction: column;
+    align-items: center; /* Centra internamente los elementos */
+    justify-content: center;
+    position: absolute;
+    left: 50px; /* Define la posición del contenedor en el lado izquierdo */
+    top: 50%;
+    transform: translateY(-50%); /* Centra verticalmente el contenedor */
+}
+
+/* Contenedor de la rueda */
+.wheel-container {
+    width: 552.5px;  /* Reducido en 15% (650px * 0.85) */
+    height: 552.5px; /* Reducido en 15% */
+    border-radius: 50%; /* Mantiene la forma circular */
+    border: 10px solid #EFB810; /* También reducir el grosor del borde (9px * 0.85) */
+    box-shadow: 
+        0 0 8.5px #EFB810,      /* Resplandor cercano ajustado */
+        0 0 17px #FFD700,      /* Resplandor medio ajustado */
+        0 0 34px rgba(255, 220, 112, 0.9); /* Resplandor extendido ajustado */
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden; /* Asegura que los números no se salgan */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(15 40 87 / 87%);
+    z-index: 10; /* Fondo azul estará debajo del resultado */
+}
+
+/* Rueda que contiene los números */
+.wheel {
+    position: absolute; /* La rueda gira dentro del contenedor */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 4s ease-out; /* Solo la rueda gira */
+}
+
+/* Estilo de cada número */
+.number {
+    position: absolute;
+    transform-origin: 50% 50%; /* Gira sobre su centro */
+    font-size: 12px; /* Mantén el tamaño del texto */
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Organiza la letra y el número en columnas */
+    justify-content: center;
+    align-items: center;
+    width: 22.95px; /* Reducido en 15% (27px * 0.85) */
+    height: 110px; /* Reducido en 15% (75px * 0.85) */
+    font-size: 14px;
+}
+
+.number .letter {
+    font-size: 12px; /* Tamaño de la letra */
+    margin-bottom: 4.25px; /* Reducido en 15% */
+    margin-top: 20px;
+}
+
+.number .num {
+    font-size: 14px; /* Mantén el tamaño del número */
+    margin-top: 15px; /* Reducido en 15% */
+}
+
+.controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+button {
+    font-family: 'Times New Roman', Times, serif;
+    padding: 10px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #1d3548;
+    color: #EFB810;
+    font-weight: bold; /* Hace que la letra sea más visible */
+    border: 5px solid #EFB810; /* Color dorado cálido */
+    border-radius: 15px;
+}
+
+button:hover {
+    background-color: #264a62; /* Mantén el color base en hover */
+    box-shadow: 
+        0 0 10px #EFB810,      /* Resplandor cercano */
+        0 0 20px #FFD700,      /* Resplandor medio */
+        0 0 30px #FFD700,      /* Resplandor externo */
+        0 0 40px rgba(255, 220, 112, 0.9); /* Resplandor extendido con transparencia */
+}
+
+/* Estilos para el resultado que aparecerá en el centro */
+.result {
+    position: absolute;
+    top: 50%; /* Centra verticalmente */
+    left: 50%; /* Centra horizontalmente */
+    transform: translate(-50%, -50%); /* Centra perfectamente el texto */
+    font-size: 136px; /* Tamaño de la fuente */
+    font-weight: bold; /* Opción para que el texto sea más visible */
+    color: #ffffff; /* Color blanco para el texto */
+    z-index: 20; /* Asegura que el texto esté encima de todo, incluido el fondo */
+
+    /* Borde negro alrededor del texto */
+    text-shadow: 
+        -5px -5px 0 #000000,  /* Sombra superior izquierda */
+        2px -2px 0 #000000,   /* Sombra superior derecha */
+        -1px 1px 0 #000000,   /* Sombra inferior izquierda */
+        1px 1px 0 #000000;    /* Sombra inferior derecha */
+}
+
+
+/* Estilos para la letra y el número */
+.result .letter {
+    font-size: 18px; /* Ajusta el tamaño de la letra */
+}
+
+.result .num {
+    font-size: 18px; /* Ajusta el tamaño del número */
+    margin-left: 5px; /* Añade un espacio entre la letra y el número */
+}
