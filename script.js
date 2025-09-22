@@ -1,4 +1,4 @@
-// script.js — ruleta estética original + conexión con la tabla
+// script.js — ruleta estética original + filtro por letra con ángulo actual
 const spinButton = document.getElementById('spinButton');
 const resultDisplay = document.getElementById('result');
 const wheel = document.getElementById('wheel');
@@ -24,7 +24,7 @@ function generateBingoNumbers() {
     return all;
 }
 
-// Dibujar la ruleta (estilo original: solo rotate + translateY)
+// Dibujar la ruleta (estilo original)
 function displayWheel(numbers) {
     const wheelAngle = 360 / numbers.length;
     const radius = 255; // valor original
@@ -47,28 +47,43 @@ function displayWheel(numbers) {
         numberElement.appendChild(letterEl);
         numberElement.appendChild(numEl);
 
+        // Colores (B 01 en verde)
         if (txt === 'B 01') {
-            numberElement.style.backgroundColor = 'green';  // ✅ tu color especial
+            numberElement.style.backgroundColor = 'green';
         } else {
             const isRed = idx % 2 === 0;
             numberElement.style.backgroundColor = isRed ? 'red' : 'black';
         }
 
-
         const angle = wheelAngle * idx;
         numberElement.style.transform = `rotate(${angle}deg) translateY(-${radius}px)`;
-
         wheel.appendChild(numberElement);
     });
 }
 
-// Girar la ruleta
 let isClockwise = true;
 let isFirstSpin = true;
+let currentAngleDeg = 0; // ← ángulo acumulado actual de la rueda (mod 360)
+
+// Devuelve un índice aleatorio que cumpla el filtro; -1 si no hay
+function pickTargetIndexByFilter(elements, filterLetter) {
+    const indices = [];
+    elements.forEach((el, i) => {
+        const letter = el.querySelector('.letter')?.textContent || '';
+        if (!filterLetter || letter === filterLetter) indices.push(i);
+    });
+    if (indices.length === 0) return -1;
+    return indices[Math.floor(Math.random() * indices.length)];
+}
+
+function mod360(x) {
+    return ((x % 360) + 360) % 360;
+}
 
 function spinWheel() {
-    const numbers = wheel.querySelectorAll('.number');
-    if (!numbers.length) {
+    // Tomamos snapshot del estado actual
+    const numbersNow = Array.from(wheel.querySelectorAll('.number'));
+    if (!numbersNow.length) {
         spinButton.disabled = true;
         return;
     }
@@ -78,35 +93,70 @@ function spinWheel() {
         ruletaSounds[Math.floor(Math.random() * ruletaSounds.length)];
     let duration = isFirstSpin ? baseDuration : Math.round(baseDuration * 1.15);
 
-    const rotations = 360 * 2;
-    const randomAngle = Math.floor(Math.random() * 360);
-    const directionMultiplier = isClockwise ? 1 : -1;
-    const totalRotation = directionMultiplier * (rotations + randomAngle);
+    const wheelAngle = 360 / numbersNow.length;
 
+    // Filtro actual
+    const filterLetter = (window.Conexion && typeof window.Conexion.getFilter === 'function')
+        ? window.Conexion.getFilter()
+        : null;
+
+    // Elegimos índice objetivo que cumpla filtro
+    const targetIndex = pickTargetIndexByFilter(numbersNow, filterLetter);
+    if (filterLetter && targetIndex === -1) {
+        // No quedan números de esa letra
+        spinButton.disabled = false;
+        // Si quieres, muestra un aviso aquí.
+        return;
+    }
+
+    const k = (targetIndex === -1)
+        ? Math.floor(Math.random() * numbersNow.length) // sin filtro
+        : targetIndex;
+
+    // --- Cálculo de rotación en función del ángulo ACTUAL ---
+    // Posición angular actual del índice k respecto al puntero:
+    const cur = mod360(currentAngleDeg);
+    const posK = mod360(k * wheelAngle + cur);
+
+    // Si giramos en sentido horario, para que k llegue al puntero (0°):
+    const deltaCW = (360 - posK) % 360;
+    // Si giramos en sentido antihorario:
+    const deltaCCW = -posK; // negativo
+
+    // Vueltas completas para que se vea natural (2 a 4)
+    const fullSpins = 2 + Math.floor(Math.random() * 3); // 2,3,4
+
+    const directionMultiplier = isClockwise ? 1 : -1;
     isClockwise = !isClockwise;
 
+    let delta;
+    if (directionMultiplier === 1) {
+        delta = fullSpins * 360 + deltaCW;     // horario
+    } else {
+        delta = -(fullSpins * 360) + deltaCCW; // antihorario (deltaCCW ya es negativo o 0)
+    }
+
+    // Reproducir sonido
     try { ruletaSound.currentTime = 0; ruletaSound.play().catch(() => { }); } catch { }
 
+    // Animar desde el ángulo actual
     wheel.style.transition = `transform ${duration / 1000}s cubic-bezier(0.1, 0.8, 0.2, 1)`;
-    wheel.style.transform = `rotate(${totalRotation}deg)`;
+    wheel.style.transform = `rotate(${currentAngleDeg + delta}deg)`;
 
     setTimeout(() => {
         try { ruletaSound.pause(); ruletaSound.currentTime = 0; } catch { }
 
-        const numbersNow = wheel.querySelectorAll('.number');
-        const wheelAngle = 360 / numbersNow.length;
-        const normalized = ((totalRotation % 360) + 360) % 360;
-        const rawIndex = Math.round((360 - normalized) / wheelAngle);
-        const n = numbersNow.length;
-        let selectedIndex = ((rawIndex % n) + n) % n;
+        // Actualizamos ángulo actual acumulado
+        currentAngleDeg = currentAngleDeg + delta;
 
-        let selectedNumberElement = numbersNow[selectedIndex] || numbersNow[0];
+        // Resultado: usamos el MISMO índice k que elegimos al inicio
+        const selectedNumberElement = numbersNow[k] || numbersNow[0];
         const letter = selectedNumberElement.querySelector('.letter')?.textContent ?? '';
         const num = selectedNumberElement.querySelector('.num')?.textContent ?? '';
 
         resultDisplay.textContent = `${letter} ${num}`;
 
-        // Conexión con la tabla (bridge + evento)
+        // Notificar a la tabla / historial
         try { window.Conexion && window.Conexion.publish({ letter, num, ts: Date.now() }); } catch { }
         try { window.dispatchEvent(new CustomEvent('bingo:drawn', { detail: { letter, num } })); } catch { }
 
@@ -114,7 +164,9 @@ function spinWheel() {
             try { campanaSound.currentTime = 0; campanaSound.play().catch(() => { }); } catch { }
         }
 
+        // Quitar el número de la ruleta
         selectedNumberElement.remove();
+
         spinButton.disabled = wheel.querySelectorAll('.number').length === 0;
         isFirstSpin = false;
     }, duration + 50);
@@ -123,6 +175,8 @@ function spinWheel() {
 // Inicializar
 let bingoNumbers = generateBingoNumbers();
 displayWheel(bingoNumbers);
+
+// Click / teclado
 spinButton.addEventListener('click', spinWheel);
 spinButton.addEventListener('keydown', (e) => {
     if ((e.key === 'Enter' || e.key === ' ') && !spinButton.disabled) {
@@ -130,3 +184,5 @@ spinButton.addEventListener('keydown', (e) => {
         spinWheel();
     }
 });
+
+

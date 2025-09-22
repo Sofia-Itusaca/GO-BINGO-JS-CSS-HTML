@@ -1,7 +1,9 @@
 /* ============ TABLA (ESTÉTICA, ANCHO 1105px) ============ */
 .content2 {
-    width: 170%;              /* igual que tenías */
-    margin-left: 30%;         /* igual que tenías */
+    width: 170%;
+    /* igual que tenías */
+    margin-left: 30%;
+    /* igual que tenías */
     margin-right: 2%;
     padding: 20px;
     box-sizing: border-box;
@@ -9,7 +11,8 @@
 
 table.table {
     width: 100%;
-    max-width: 1105px;        /* ← ancho objetivo */
+    max-width: 1105px;
+    /* ← ancho objetivo */
     border-collapse: collapse;
     background-color: rgba(9, 78, 117, 0.696);
     box-shadow:
@@ -23,12 +26,15 @@ table.table {
 /* celdas: mayor legibilidad (sin cambiar colores) */
 table.table th,
 table.table td {
-    padding: 10px 8px;        /* antes 4px */
+    padding: 10px 8px;
+    /* antes 4px */
     text-align: center;
     border: none;
     background-color: transparent;
-    color: black;             /* mantiene tu estética */
-    font-size: 18px;          /* antes 14px */
+    color: black;
+    /* mantiene tu estética */
+    font-size: 18px;
+    /* antes 14px */
     filter: grayscale(100%) opacity(0.5);
     transition: all 0.3s ease;
 }
@@ -43,30 +49,61 @@ table.table th {
     border: none;
     padding-bottom: 10px;
     filter: none;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
-/* bordes dorados: igual */
-table.table tr:nth-child(odd) td { border-left: 3px solid #EFB810; }
-table.table tr:nth-child(even) td { border-left: 3px solid #EFB810; }
-table.table td:last-child { border-right: 3px solid #EFB810; }
-table.table tr:first-child td { border-top: none; }
-table.table tr:last-child  td { border-bottom: none; }
+/* cuando la letra está activa (clicada) */
+table.table th[data-active="true"] {
+    color: #e65100 !important;  /* rojo anaranjado */
+    transform: scale(1.10);     /* +10% */
+}
 
-.table tr:nth-child(even) { background-color: transparent; }
-.table tr:hover { background-color: transparent; }
+
+/* bordes dorados: igual */
+table.table tr:nth-child(odd) td {
+    border-left: 3px solid #EFB810;
+}
+
+table.table tr:nth-child(even) td {
+    border-left: 3px solid #EFB810;
+}
+
+table.table td:last-child {
+    border-right: 3px solid #EFB810;
+}
+
+table.table tr:first-child td {
+    border-top: none;
+}
+
+table.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr:nth-child(even) {
+    background-color: transparent;
+}
+
+.table tr:hover {
+    background-color: transparent;
+}
 
 /* ============ BOLITAS (LIGERAMENTE MÁS GRANDES) ============ */
 .circle {
     display: inline-block;
-    width: 46px;              /* ↑ (era 30/44) */
+    width: 46px;
+    /* ↑ (era 30/44) */
     height: 46px;
     border-radius: 50%;
-    background-color: transparent;  /* color lo pone tu JS */
+    background-color: transparent;
+    /* color lo pone tu JS */
     color: black;
     font-weight: bold;
-    line-height: 46px;        /* centra vertical */
+    line-height: 46px;
+    /* centra vertical */
     text-align: center;
-    font-size: 16px;          /* número exterior si lo usas */
+    font-size: 16px;
+    /* número exterior si lo usas */
     position: relative;
     transition: all 0.3s ease;
 }
@@ -74,7 +111,8 @@ table.table tr:last-child  td { border-bottom: none; }
 /* círculo blanco interior (número visible) */
 .circle .white-circle {
     display: inline-block;
-    width: 32px;              /* ↑ para que se lea mejor */
+    width: 32px;
+    /* ↑ para que se lea mejor */
     height: 32px;
     border-radius: 50%;
     background-color: white;
@@ -82,7 +120,8 @@ table.table tr:last-child  td { border-bottom: none; }
     font-weight: bold;
     line-height: 32px;
     text-align: center;
-    font-size: 19px;          /* tamaño del número */
+    font-size: 19px;
+    /* tamaño del número */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -96,16 +135,59 @@ table.table td.active {
     animation: multicolor-flash 3s infinite;
     transition: all 0.3s ease;
 }
-table.table td.active .circle { animation: multicolor-flash 3s infinite; }
 
-@keyframes multicolor-flash {
-    0%   { box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; }
-    20%  { box-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500; }
-    40%  { box-shadow: 0 0 10px #4CAF50, 0 0 20px #4CAF50; }
-    60%  { box-shadow: 0 0 10px #1E90FF, 0 0 20px #1E90FF; }
-    80%  { box-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2; }
-    100% { box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; }
+table.table td.active .circle {
+    animation: multicolor-flash 3s infinite;
 }
 
-table.table td.clicked { animation: multicolor-flash 3s infinite; }
-table.table td.clicked .circle { animation: multicolor-flash 3s infinite; }
+@keyframes multicolor-flash {
+    0% {
+        box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+    }
+
+    20% {
+        box-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500;
+    }
+
+    40% {
+        box-shadow: 0 0 10px #4CAF50, 0 0 20px #4CAF50;
+    }
+
+    60% {
+        box-shadow: 0 0 10px #1E90FF, 0 0 20px #1E90FF;
+    }
+
+    80% {
+        box-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2;
+    }
+
+    100% {
+        box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+    }
+}
+
+table.table td.clicked {
+    animation: multicolor-flash 3s infinite;
+}
+
+table.table td.clicked .circle {
+    animation: multicolor-flash 3s infinite;
+}
+
+/* Quita cualquier borde/halo de enfoque */
+table.table th:focus,
+table.table th:focus-visible,
+table.table td:focus,
+table.table td:focus-visible,
+.circle:focus,
+.circle .white-circle:focus,
+button:focus,
+button:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Evita el flash negro/blanco en móviles */
+* {
+    -webkit-tap-highlight-color: transparent;
+}

@@ -1,4 +1,4 @@
-// script2.js — tabla 2 columnas + conexión con la ruleta
+// script2.js — tabla 2 columnas + encabezados "botón" con filtro
 document.addEventListener('DOMContentLoaded', () => {
     const content2 = document.querySelector('.content2');
     if (!content2) return;
@@ -8,13 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
     table.setAttribute('role', 'table');
     table.setAttribute('aria-label', 'Tabla de números de bingo');
 
-    // Encabezado
+    // Encabezado: cada letra ocupa 2 columnas y actúa como botón
     const thead = document.createElement('thead');
     const headRow = document.createElement('tr');
+    const heads = {};
     ['B', 'I', 'N', 'G', 'O'].forEach(letter => {
         const th = document.createElement('th');
         th.textContent = letter;
         th.colSpan = 2;
+        th.style.cursor = 'pointer';
+        th.style.userSelect = 'none';
+        th.setAttribute('tabindex', '0');
+        // transición suave para el efecto de activo
+        th.style.transition = 'transform 0.2s ease, color 0.2s ease';
+        heads[letter] = th;
         headRow.appendChild(th);
     });
     thead.appendChild(headRow);
@@ -41,8 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = r + sub * ROWS;
                 const arr = ranges[letter];
                 const num = (idx < arr.length) ? arr[idx] : null;
+
                 const td = document.createElement('td');
                 td.tabIndex = 0;
+
                 if (num !== null) {
                     td.dataset.letter = letter;
                     td.dataset.num = String(num).padStart(2, '0');
@@ -70,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     table.appendChild(tbody);
     content2.appendChild(table);
 
-    // Marcar celda manualmente
+    // Interacción manual en celdas
     function toggle(td) {
         if (td.classList.contains('active')) {
             td.classList.remove('active', 'clicked');
@@ -92,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Marcar celda desde la ruleta
+    // Marcar desde la ruleta
     function mark(letter, num) {
         const selector = `td[data-letter="${letter}"][data-num="${String(num).padStart(2, '0')}"]`;
         const cell = table.querySelector(selector);
@@ -101,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.setAttribute('aria-pressed', 'true');
         }
     }
-
     if (window.Conexion && typeof window.Conexion.subscribe === 'function') {
         window.Conexion.subscribe(({ letter, num }) => mark(letter, num), true);
     } else {
@@ -111,8 +119,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const allCells = document.querySelectorAll('table.table td');
-    allCells.forEach(td => {
+    // ===== Encabezados como botones de filtro (crecen 5% + naranja) =====
+    let activeLetter = null; // cuál está activa
+
+    function applyHeaderStyles() {
+        ['B', 'I', 'N', 'G', 'O'].forEach(letter => {
+            const th = heads[letter];
+            if (letter === activeLetter) {
+                th.style.transform = 'scale(1.05)';    // crecer 5%
+                th.style.color = '#ff9800';            // naranja activo
+            } else {
+                th.style.transform = 'scale(1)';       // tamaño base
+                th.style.color = '';                   // limpiar: vuelve al dorado del CSS
+            }
+        });
+    }
+
+    function setFilter(letterOrNull) {
+        activeLetter = letterOrNull;
+        applyHeaderStyles();
+        if (window.Conexion && typeof window.Conexion.setFilter === 'function') {
+            window.Conexion.setFilter(letterOrNull);
+        }
+    }
+
+    // click / teclado
+    Object.entries(heads).forEach(([letter, th]) => {
+        th.addEventListener('click', () => {
+            setFilter(activeLetter === letter ? null : letter);
+        });
+        th.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setFilter(activeLetter === letter ? null : letter);
+            }
+        });
+    });
+
+    // si alguien más cambia el filtro, refleja el estado
+    if (window.Conexion && typeof window.Conexion.subscribeFilter === 'function') {
+        window.Conexion.subscribeFilter((flt) => {
+            activeLetter = flt || null;
+            applyHeaderStyles();
+        }, true);
+    }
+
+    // Al cargar, limpia celdas (arranque apagado)
+    document.querySelectorAll('table.table td').forEach(td => {
         td.classList.remove('active', 'clicked');
         td.setAttribute('aria-pressed', 'false');
     });
