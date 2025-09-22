@@ -1,4 +1,4 @@
-// script2.js (tabla en 2 columnas + conexión con puente)
+// script2.js — tabla 2 columnas + conexión con la ruleta
 document.addEventListener('DOMContentLoaded', () => {
     const content2 = document.querySelector('.content2');
     if (!content2) return;
@@ -6,15 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = document.createElement('table');
     table.classList.add('table');
     table.setAttribute('role', 'table');
-    table.setAttribute('aria-label', 'Tabla de numeros de bingo');
+    table.setAttribute('aria-label', 'Tabla de números de bingo');
 
-    // encabezado: cada letra ocupa 2 columnas
+    // Encabezado
     const thead = document.createElement('thead');
     const headRow = document.createElement('tr');
     ['B', 'I', 'N', 'G', 'O'].forEach(letter => {
         const th = document.createElement('th');
         th.textContent = letter;
-        th.setAttribute('scope', 'col');
         th.colSpan = 2;
         headRow.appendChild(th);
     });
@@ -27,9 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         I: Array.from({ length: 15 }, (_, i) => i + 16),
         N: Array.from({ length: 15 }, (_, i) => i + 31),
         G: Array.from({ length: 15 }, (_, i) => i + 46),
-        O: Array.from({ length: 15 }, (_, i) => i + 61)
+        O: Array.from({ length: 15 }, (_, i) => i + 61),
     };
-
     const colors = ['#4CAF50', '#00BCD4', '#F44336', '#FF4081', '#FFEB3B', '#9C27B0'];
     const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
@@ -43,11 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = r + sub * ROWS;
                 const arr = ranges[letter];
                 const num = (idx < arr.length) ? arr[idx] : null;
-
                 const td = document.createElement('td');
-                td.setAttribute('role', 'gridcell');
                 td.tabIndex = 0;
-
                 if (num !== null) {
                     td.dataset.letter = letter;
                     td.dataset.num = String(num).padStart(2, '0');
@@ -62,12 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     circle.style.backgroundColor = getRandomColor();
                     circle.appendChild(whiteCircle);
                     td.appendChild(circle);
-                    td.classList.add('clickable');
                 } else {
                     td.innerHTML = '&nbsp;';
                     td.setAttribute('aria-hidden', 'true');
                 }
-
                 tr.appendChild(td);
             }
         });
@@ -77,20 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     table.appendChild(tbody);
     content2.appendChild(table);
 
-    // interacción manual
-    table.addEventListener('click', (e) => {
-        const td = e.target.closest('td[data-letter]');
-        if (!td) return;
-        toggle(td);
-    });
-    table.addEventListener('keydown', (e) => {
-        const td = e.target.closest('td[data-letter]');
-        if (!td) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggle(td);
-        }
-    });
+    // Marcar celda manualmente
     function toggle(td) {
         if (td.classList.contains('active')) {
             td.classList.remove('active', 'clicked');
@@ -100,28 +80,40 @@ document.addEventListener('DOMContentLoaded', () => {
             td.setAttribute('aria-pressed', 'true');
         }
     }
+    table.addEventListener('click', e => {
+        const td = e.target.closest('td[data-letter]');
+        if (td) toggle(td);
+    });
+    table.addEventListener('keydown', e => {
+        const td = e.target.closest('td[data-letter]');
+        if (td && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            toggle(td);
+        }
+    });
 
-    // función para marcar desde la ruleta/puente
+    // Marcar celda desde la ruleta
     function mark(letter, num) {
-        const selector =
-            `td[data-letter="${letter}"][data-num="${String(num).padStart(2, '0')}"]`;
+        const selector = `td[data-letter="${letter}"][data-num="${String(num).padStart(2, '0')}"]`;
         const cell = table.querySelector(selector);
-        if (!cell) return;
-        cell.classList.add('active', 'clicked');
-        cell.setAttribute('aria-pressed', 'true');
-        // opcional: centrar en vista
-        // cell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        if (cell) {
+            cell.classList.add('active', 'clicked');
+            cell.setAttribute('aria-pressed', 'true');
+        }
     }
 
-    // suscripción vía puente (reproduce historial al cargar)
     if (window.Conexion && typeof window.Conexion.subscribe === 'function') {
-        // true = reenvía todo historial (para que se marquen los que ya salieron)
         window.Conexion.subscribe(({ letter, num }) => mark(letter, num), true);
     } else {
-        // fallback: evento global
-        window.addEventListener('bingo:drawn', (e) => {
+        window.addEventListener('bingo:drawn', e => {
             const { letter, num } = e.detail || {};
             if (letter && num) mark(letter, num);
         });
     }
+
+    const allCells = document.querySelectorAll('table.table td');
+    allCells.forEach(td => {
+        td.classList.remove('active', 'clicked');
+        td.setAttribute('aria-pressed', 'false');
+    });
 });

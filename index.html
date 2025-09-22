@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GO BINGO!!</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles2.css"> <!-- Archivo para la tabla -->
+    <link rel="stylesheet" href="styles2.css">
 </head>
 
 <body>
+    <!-- Fondo -->
     <div class="fondo"></div>
+
+    <!-- Decoraciones de pelotas -->
     <div style="position: relative; width: 500px; height: 500px;">
         <img class="billar" src="pelota.png" alt="Pelota de billar">
     </div>
@@ -19,7 +23,6 @@
     <div style="position: relative; width: 500px; height: 500px;">
         <img class="pelota3" src="pelota3.png" alt="Pelota de billar3">
     </div>
-    
     <div class="pelota-container">
         <img class="pelota4" src="pelota4.png" alt="Pelota de billar4">
     </div>
@@ -33,29 +36,27 @@
         <img class="pelota7" src="pelota7.png" alt="Pelota de billar7">
     </div>
 
-    <audio id="ruletaSound" src="sonido_de_ruleta.mp3" preload="auto"></audio>
-    <audio id="ruletaSound" src="sonido_de_ruleta2.mp3" preload="auto"></audio>
-    <audio id="ruletaSound" src="sonido_de_ruleta3.mp3" preload="auto"></audio>
+    <!-- Audios -->
     <audio id="campanaSound" src="campana.mp3" preload="auto"></audio>
 
+    <!-- Ruleta -->
     <div class="content1">
         <div class="wheel-container">
             <div class="wheel" id="wheel"></div>
-            <div class="result" id="result"></div> <!-- El resultado aparecerá aquí -->
+            <div class="result" id="result" role="status" aria-live="polite" aria-atomic="true"></div>
         </div>
-
         <div class="controls">
             <button id="spinButton">GO</button>
         </div>
     </div>
 
-    <div class="content2"></div> <!-- Nuevo contenedor para la tabla -->
+    <!-- Tabla -->
+    <section class="content2" aria-label="tabla de numeros"></section>
 
-    <!-- PUENTE -->
+    <!-- Scripts -->
     <script src="conexion/bridge.js"></script>
-
     <script src="script.js"></script>
-    <script src="script2.js"></script> <!-- Archivo para la tabla -->
-    
+    <script src="script2.js"></script>
 </body>
+
 </html>
